@@ -8,16 +8,24 @@ function frontendutilities_order_fonts() {
     local file
     local font_weight
     local font_style
+    local font_rel_path
 
-    if [[ ! -d "assets/fonts/raw" ]]; then
-        echo 'The dir "assets/fonts/raw" does not exists'
+    local _dir="${_CURRENTDIR}assets/fonts/"
+
+    # Stop if the 'raw' directory is empty
+    if [[ ! -d "${_dir}raw" ]]; then
+        echo "The dir '${_dir}raw' does not exists"
+        return 0
+    fi
+    if [[ -z "$(ls -A ${_dir}raw)" ]]; then
+        echo "The dir '${_dir}raw' is empty"
         return 0
     fi
 
-    # Parcourir tous les fichiers dans le répertoire 'raw'
-    for file in assets/fonts/raw/*.woff; do
+    # Browse all files in the 'raw' directory
+    for file in ${_dir}raw/*.woff; do
 
-        # Supprimer le préfixe 'subset-' et obtenir le nom de la police et l'extension
+        # Remove 'subset-' prefix and get font name and extension
         font_file=$(basename "$file")
         font_name=${font_file#subset-}
         font_name_no_ext=${font_name%.*}
@@ -28,20 +36,19 @@ function frontendutilities_order_fonts() {
         font_name_no_ext=${font_name_no_ext//-Black/}
         font_name_no_ext=${font_name_no_ext//-BoldItalic/}
         font_name_no_ext=${font_name_no_ext//-Bold/}
-        font_name_no_ext=${font_name_no_ext//-Italic/}
-        font_name_no_ext=${font_name_no_ext//-LightItalic/}
-        font_name_no_ext=${font_name_no_ext//-Light/}
+        font_name_no_ext=${font_name_no_ext//-SemiBoldItalic/}
+        font_name_no_ext=${font_name_no_ext//-SemiBold/}
         font_name_no_ext=${font_name_no_ext//-MediumItalic/}
         font_name_no_ext=${font_name_no_ext//-Medium/}
         font_name_no_ext=${font_name_no_ext//-Regular/}
-        font_name_no_ext=${font_name_no_ext//-SemiBoldItalic/}
-        font_name_no_ext=${font_name_no_ext//-SemiBold/}
+        font_name_no_ext=${font_name_no_ext//-Italic/}
+        font_name_no_ext=${font_name_no_ext//-LightItalic/}
+        font_name_no_ext=${font_name_no_ext//-Light/}
         font_name_no_ext=${font_name_no_ext//-ThinItalic/}
         font_name_no_ext=${font_name_no_ext//-Thin/}
 
+        # Detect font weight
         font_weight='400'
-        font_style='normal'
-        # Detect black, italic, etc in font_name and set font_style and font_weight
         if [[ $font_name == *"-Black"* ]]; then
             font_weight='900'
         elif [[ $font_name == *"-Bold"* ]]; then
@@ -58,22 +65,35 @@ function frontendutilities_order_fonts() {
             font_weight='100'
         fi
 
+        # Detect font style
+        font_style='normal'
         if [[ $font_name == *"Italic"* ]]; then
             font_style='italic'
         fi
 
-        # Créer un nouveau répertoire pour chaque police de caractères
-        mkdir -p "assets/fonts/$font_name_no_ext"
+        # Create a new directory for each font
+        mkdir -p "${_dir}$font_name_no_ext"
 
-        # Déplacer les fichiers dans le bon répertoire
-        cp "$file" "assets/fonts/$font_name_no_ext/$font_name"
+        # Move files to the correct directory
+        cp "$file" "${_dir}$font_name_no_ext/$font_name"
         if [[ -f "${file}2" ]]; then
-            cp "${file}2" "assets/fonts/$font_name_no_ext/${font_name}2"
+            cp "${file}2" "${_dir}$font_name_no_ext/${font_name}2"
         fi
 
-        # Générer une liste de @font-face pour chaque fichier
-        echo "@include cssc-font-face('$font_name_no_ext', '../fonts/$font_name_no_ext/$font_name_no_ext_base', $font_weight, $font_style, woff2 woff);"
+        # Generate a list of @font-face for each file
+        font_rel_path="../fonts/$font_name_no_ext/$font_name_no_ext_base"
+        if [[ "${2}" == "font-face" ]]; then
+            echo "@font-face {"
+            echo "    font-family: '$font_name_no_ext';"
+            echo "    font-style: $font_style;"
+            echo "    font-weight: $font_weight;"
+            echo "    src: url('$font_rel_path.woff2') format('woff2'),"
+            echo "         url('$font_rel_path.woff') format('woff');"
+            echo "}"
+        else
+            echo "@include cssc-font-face('$font_name_no_ext', '${font_rel_path}', $font_weight, $font_style, woff2 woff);"
+        fi
     done
 
 }
-frontendutilities_order_fonts;
+frontendutilities_order_fonts $@

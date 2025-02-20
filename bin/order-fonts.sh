@@ -22,6 +22,8 @@ function frontendutilities_order_fonts() {
         return 0
     fi
 
+    _lastfontname="";
+
     # Browse all files in the 'raw' directory
     for file in ${_dir}raw/*.woff; do
 
@@ -34,6 +36,8 @@ function frontendutilities_order_fonts() {
         # Replace -Black, -BlackItalic, etc in font_name_no_ext
         font_name_no_ext=${font_name_no_ext//-BlackItalic/}
         font_name_no_ext=${font_name_no_ext//-Black/}
+        font_name_no_ext=${font_name_no_ext//-ExtraBoldItalic/}
+        font_name_no_ext=${font_name_no_ext//-ExtraBold/}
         font_name_no_ext=${font_name_no_ext//-BoldItalic/}
         font_name_no_ext=${font_name_no_ext//-Bold/}
         font_name_no_ext=${font_name_no_ext//-SemiBoldItalic/}
@@ -53,6 +57,8 @@ function frontendutilities_order_fonts() {
         font_weight='400'
         if [[ $font_name == *"-Black"* ]]; then
             font_weight='900'
+        elif [[ $font_name == *"-ExtraBold"* ]]; then
+            font_weight='800'
         elif [[ $font_name == *"-Bold"* ]]; then
             font_weight='700'
         elif [[ $font_name == *"-SemiBold"* ]]; then
@@ -80,6 +86,11 @@ function frontendutilities_order_fonts() {
         cp "$file" "${_dir}$font_name_no_ext/$font_name"
         if [[ -f "${file}2" ]]; then
             cp "${file}2" "${_dir}$font_name_no_ext/${font_name}2"
+        fi
+
+        if [[ "$_lastfontname" != "$font_name_no_ext" ]]; then
+            _lastfontname="$font_name_no_ext";
+            echo "/* $font_name_no_ext */";
         fi
 
         # Generate a list of @font-face for each file

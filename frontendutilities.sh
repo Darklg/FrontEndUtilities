@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.2.2
+## Frontend Utilities v 0.3.0
 ###################################
 TXT
 
@@ -16,6 +16,10 @@ function frontendutilities_init() {
     case "$1" in
     "order-fonts")
         . "${_SOURCEDIR}bin/order-fonts.sh"
+        ;;
+    "" | "help")
+        echo "Help :"
+        echo "- frontendutilities order-fonts";
         ;;
     *)
         echo "frontendutilities: '$1' is not a frontendutilities command."

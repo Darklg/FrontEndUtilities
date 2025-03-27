@@ -108,5 +108,13 @@ function frontendutilities_order_fonts() {
         fi
     done
 
+
+    # Remove the 'raw' directory
+    read -r -p "Do you want to remove the 'raw' directory? [y/N] " yn
+    if [[ "$yn" == "y" ]]; then
+        rm -rf "${_dir}raw";
+        echo "The 'raw' directory has been removed";
+    fi
+
 }
 frontendutilities_order_fonts $@

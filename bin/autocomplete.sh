@@ -13,7 +13,7 @@ _frontendutilities_complete() {
     prev=${COMP_WORDS[COMP_CWORD-1]}
 
     if [ $COMP_CWORD -eq 1 ]; then
-        COMPREPLY=( $(compgen -W "order-fonts" -- $cur) )
+        COMPREPLY=( $(compgen -W "fix-icons order-fonts" -- $cur) )
     elif [ $COMP_CWORD -eq 2 ]; then
         case "$prev" in
             "order-fonts")

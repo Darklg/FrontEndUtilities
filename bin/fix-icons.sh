@@ -7,6 +7,7 @@ function frontendutilities_fix_icons(){
     local _answer;
     local svg_files;
     local can_override=0;
+    local inkscape_meta_files;
 
     # Test if inkscape is installed
     if ! command -v inkscape >/dev/null 2>&1; then
@@ -24,9 +25,18 @@ function frontendutilities_fix_icons(){
     # Find SVG files in the current directory containing "stroke-width"
     svg_files=($(find . -type f -name "*.svg" -exec grep -l "stroke-width=" {} +))
 
+    # Find SVG files containing inkscape metadata and add them to the list
+    inkscape_meta_files=($(find . -type f -name "*.svg" -exec grep -l "inkscape:" {} +))
+    for file in "${inkscape_meta_files[@]}"; do
+        # Add file if not already in svg_files
+        if [[ ! " ${svg_files[*]} " =~ " ${file} " ]]; then
+            svg_files+=("$file")
+        fi
+    done
+
     # If no SVG files are found, return
     if [[ ${#svg_files[@]} -eq 0 ]]; then
-        echo "No SVG files found with 'stroke-width'."
+        echo "No SVG files found with 'stroke-width' or inkscape metadata."
         read -p "Do you want to continue anyway? (y/N): " _answer
         if [[ ! "$_answer" =~ ^[Yy]$ ]]; then
             return 0

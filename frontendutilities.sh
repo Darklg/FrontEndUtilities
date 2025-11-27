@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.4.0
+## Frontend Utilities v 0.5.0
 ###################################
 TXT
 
@@ -11,19 +11,17 @@ function frontendutilities_init() {
     local _CURRENTDIR="$(pwd)/"
 
     # Autocomplete
-    . "${_SOURCEDIR}bin/autocomplete.sh"
+    . "${_SOURCEDIR}bin/autocomplete.sh";
 
     case "$1" in
-    "order-fonts")
-        . "${_SOURCEDIR}bin/order-fonts.sh"
-        ;;
-    "fix-icons")
-        . "${_SOURCEDIR}bin/fix-icons.sh"
+    "order-fonts" | "convert-fonts" | "fix-icons")
+        . "${_SOURCEDIR}bin/${1}.sh";
         ;;
     "" | "help")
         echo "Help :"
-        echo "- frontendutilities order-fonts";
+        echo "- frontendutilities convert-fonts";
         echo "- frontendutilities fix-icons";
+        echo "- frontendutilities order-fonts";
         ;;
     *)
         echo "frontendutilities: '$1' is not a frontendutilities command."

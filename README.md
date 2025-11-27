@@ -2,14 +2,20 @@
 
 ## Tools
 
-### Order Fonts
+### Convert Fonts
 
-- `frontendutilities order-fonts`
+- `frontendutilities convert-fonts`
 
-Move fonts from an assets/fonts/raw dir and create correct directories & cssc-font-face rules.
+Convert TTF fonts in an assets/fonts/raw dir to WOFF and WOFF2 formats.
 
 ### Fix Icons
 
 - `frontendutilities fix-icons`
 
 Transform SVG files using strokes to use fills instead.
+
+### Order Fonts
+
+- `frontendutilities order-fonts`
+
+Move fonts from an assets/fonts/raw dir and create correct directories & cssc-font-face rules.

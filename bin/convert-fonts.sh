@@ -12,6 +12,11 @@ function frontendutilities_convert_fonts(){
         return 0;
     fi;
 
+    if [[ ! -d "${_dir}" ]]; then
+        echo "The dir '${_dir}' does not exists"
+        return 0
+    fi
+
     # Stop if the 'raw' directory is empty
     if [[ ! -d "${_dir}raw" ]]; then
         echo "The dir '${_dir}raw' does not exists"
@@ -24,19 +29,38 @@ function frontendutilities_convert_fonts(){
 
     cd "${_dir}raw";
 
-    for _f in *.ttf; do
-        _base="${_f.*}"
-        pyftsubset "$_f" --output-file="${_base}.woff" \
+    for _f in *.ttf *.otf; do
+        _base="${_f/.ttf/}"
+        _base="${_base/.otf/}" ;
+        echo "- Converting font file: ${_base}";
+
+        if ! pyftsubset "$_f" --output-file=/dev/null \
+            --flavor=woff --layout-features='*' \
+            --unicodes="U+0000-00FF,U+0100-024F" >/dev/null 2>&1; then
+            echo "Skipping invalid font file: ${_f}"
+            continue
+        fi
+
+        if [ ! -f "${_base}.woff" ]; then
+            pyftsubset "$_f" --output-file="${_base}.woff" \
             --flavor=woff --layout-features='*' \
             --unicodes="U+0000-00FF,U+0100-024F"
-        pyftsubset "$_f" --output-file="${_base}.woff2" \
+        else
+            echo "File ${_base}.woff already exists, skipping."
+        fi;
+
+        if [ ! -f "${_base}.woff2" ]; then
+            pyftsubset "$_f" --output-file="${_base}.woff2" \
             --flavor=woff2 --layout-features='*' \
             --unicodes="U+0000-00FF,U+0100-024F"
+        else
+            echo "File ${_base}.woff2 already exists, skipping."
+        fi;
     done;
 
     cd "${_CURRENTDIR}";
 
-    echo "Font conversion completed.";
+    echo "- Font conversion completed.";
 
     # Clean
     . "${_SOURCEDIR}bin/stop.sh"

@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.6.0
+## Frontend Utilities v 0.7.0
 ###################################
 TXT
 
@@ -10,21 +10,27 @@ function frontendutilities_init() {
     local _SOURCEDIR="$(dirname "${BASH_SOURCE[0]}")/"
     local _CURRENTDIR="$(pwd)/"
 
+
+    local _help_text="Help :\n\
+- frontendutilities convert-fonts\n\
+- frontendutilities fix-icons\n\
+- frontendutilities order-fonts\n\
+- frontendutilities download-font\n";
+
+
     # Autocomplete
     . "${_SOURCEDIR}bin/autocomplete.sh";
 
     case "$1" in
-    "order-fonts" | "convert-fonts" | "fix-icons")
+    "order-fonts" | "convert-fonts" | "fix-icons" | "download-font" )
         . "${_SOURCEDIR}bin/${1}.sh";
         ;;
     "" | "help")
-        echo "Help :"
-        echo "- frontendutilities convert-fonts";
-        echo "- frontendutilities fix-icons";
-        echo "- frontendutilities order-fonts";
+        echo -e "${_help_text}";
         ;;
     *)
-        echo "frontendutilities: '$1' is not a frontendutilities command."
+        echo -e "/!\ '$1' is not a frontendutilities command."
+        echo -e "${_help_text}";
         ;;
     esac
 

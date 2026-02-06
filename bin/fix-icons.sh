@@ -22,6 +22,13 @@ function frontendutilities_fix_icons(){
         _has_svgo=0;
     fi;
 
+    # Check if node_modules exists in current directory
+    if [[ -d "node_modules" ]]; then
+        echo "Error: node_modules directory found in current directory.";
+        echo "Please run this script from a different location.";
+        return 0
+    fi
+
     # Find SVG files in the current directory containing "stroke-width"
     svg_files=($(find . -type f -name "*.svg" -exec grep -l "stroke-width=" {} +))
 
@@ -62,7 +69,7 @@ function frontendutilities_fix_icons(){
 
         # Convert strokes to fills
         inkscape \
-            --actions="select-all;object-stroke-to-path;export-filename:${_newfile};export-plain-svg;export-do;file-close" \
+            --actions="select-all;fit-canvas-to-selection;object-stroke-to-path;export-filename:${_newfile};export-plain-svg;export-do;file-close" \
             "$svg_file"
 
         # Clean up the new file

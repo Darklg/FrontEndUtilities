@@ -30,6 +30,19 @@ function frontendutilities_order_fonts() {
         # Remove 'subset-' prefix and get font name and extension
         font_file=$(basename "$file")
         font_name=${font_file#subset-}
+
+        # Clean weights and styles from the font name
+        font_name=${font_name/black/Black};
+        font_name=${font_name/bold/Bold};
+        font_name=${font_name/extra/Extra};
+        font_name=${font_name/italic/Italic};
+        font_name=${font_name/light/Light};
+        font_name=${font_name/medium/Medium};
+        font_name=${font_name/regular/Regular};
+        font_name=${font_name/semi/Semi};
+        font_name=${font_name/thin/Thin};
+
+        # Remove the extension from the font name
         font_name_no_ext=${font_name%.*}
         font_name_no_ext_base=${font_name_no_ext}
 

@@ -19,3 +19,9 @@ Transform SVG files using strokes to use fills instead.
 - `frontendutilities order-fonts`
 
 Move fonts from an assets/fonts/raw dir and create correct directories & cssc-font-face rules.
+
+### Center Icon
+
+- `frontendutilities center-icon <path/to/icon.svg>`
+
+Center an SVG icon by calculating the bounding box and adjusting the viewBox and path data accordingly.

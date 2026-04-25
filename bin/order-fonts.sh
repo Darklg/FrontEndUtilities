@@ -59,6 +59,8 @@ function frontendutilities_order_fonts() {
         font_name_no_ext=${font_name_no_ext//-Medium/}
         font_name_no_ext=${font_name_no_ext//-Regular/}
         font_name_no_ext=${font_name_no_ext//-Italic/}
+        font_name_no_ext=${font_name_no_ext//-ExtraLightItalic/}
+        font_name_no_ext=${font_name_no_ext//-ExtraLight/}
         font_name_no_ext=${font_name_no_ext//-LightItalic/}
         font_name_no_ext=${font_name_no_ext//-Light/}
         font_name_no_ext=${font_name_no_ext//-BookItalic/}
@@ -82,6 +84,8 @@ function frontendutilities_order_fonts() {
             font_weight='400'
         elif [[ $font_name == *"-Light"* || $font_name == *"-Book"* ]]; then
             font_weight='300'
+        elif [[ $font_name == *"-ExtraLight"* ]]; then
+            font_weight='200'
         elif [[ $font_name == *"-Thin"* ]]; then
             font_weight='100'
         fi

@@ -42,6 +42,9 @@ function frontendutilities_order_fonts() {
         font_name=${font_name/semi/Semi};
         font_name=${font_name/thin/Thin};
 
+        # Fix some weird cases
+        font_name=${font_name/RegularItalic/Italic};
+
         # Remove the extension from the font name
         font_name_no_ext=${font_name%.*}
         font_name_no_ext_base=${font_name_no_ext}

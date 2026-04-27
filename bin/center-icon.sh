@@ -5,22 +5,50 @@ function frontendutilities_center_icon() {
     local INPUT_FILE="${2:-}"
     local OUTPUT_FILE="${3:-}"
 
+    if ! command -v inkscape >/dev/null 2>&1; then
+        echo "Error: inkscape is not installed"
+        return 0;
+    fi
+
+    if [[ -z "${INPUT_FILE}" ]]; then
+
+        local _PARSE_ALL_FILES;
+        read -r -p "No input file specified. Do you want to process all .svg files in the current directory? (y/N) " _PARSE_ALL_FILES
+        if [[ "${_PARSE_ALL_FILES}" != "y" ]]; then
+            echo "Aborting."
+            return 0;
+        fi
+
+        shopt -s nullglob
+        local svgs=( *.svg )
+        shopt -u nullglob
+
+        if [[ ${#svgs[@]} -eq 0 ]]; then
+            echo "No .svg file found in current directory"
+            return 0;
+        fi
+
+        local f
+        for f in "${svgs[@]}"; do
+            frontendutilities_center_icon_one "${f}"
+        done
+        return 0;
+    fi
+
+    frontendutilities_center_icon_one "${INPUT_FILE}" "${OUTPUT_FILE}"
+}
+
+function frontendutilities_center_icon_one() {
+
+    local INPUT_FILE="${1:-}"
+    local OUTPUT_FILE="${2:-}"
+
     if [[ -z "${OUTPUT_FILE}" ]]; then
         OUTPUT_FILE="${INPUT_FILE}";
     fi;
 
-    if [[ -z "${INPUT_FILE}" ]]; then
-        echo "Usage: $0 input.svg [output.svg]"
-        return 0;
-    fi
-
     if [[ ! -f "${INPUT_FILE}" ]]; then
-        echo "Error: input file does not exist"
-        return 0;
-    fi
-
-    if ! command -v inkscape >/dev/null 2>&1; then
-        echo "Error: inkscape is not installed"
+        echo "Error: input file does not exist: ${INPUT_FILE}"
         return 0;
     fi
 
@@ -44,7 +72,7 @@ function frontendutilities_center_icon() {
     )"
 
     if [[ -z "${W}" || -z "${H}" ]]; then
-        echo "Error: failed to compute bounding box"
+        echo "Error: failed to compute bounding box for ${INPUT_FILE}"
         return 0;
     fi
 
@@ -77,8 +105,8 @@ function frontendutilities_center_icon() {
 
     mv "${TMP_FILE}" "${OUTPUT_FILE}"
 
-    echo "c bon";
-
+    echo "centered: ${INPUT_FILE}";
 }
+
 
 frontendutilities_center_icon $@

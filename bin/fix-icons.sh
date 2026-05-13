@@ -2,6 +2,7 @@
 
 function frontendutilities_fix_icons(){
 
+    local _target_file="$1";
     local _newfile;
     local _has_svgo=1;
     local _answer;
@@ -22,33 +23,45 @@ function frontendutilities_fix_icons(){
         _has_svgo=0;
     fi;
 
-    # Check if node_modules exists in current directory
-    if [[ -d "node_modules" ]]; then
-        echo "Error: node_modules directory found in current directory.";
-        echo "Please run this script from a different location.";
-        return 0
-    fi
-
-    # Find SVG files in the current directory containing "stroke-width"
-    svg_files=($(find . -type f -name "*.svg" -exec grep -l "stroke-width=" {} +))
-
-    # Find SVG files containing inkscape metadata and add them to the list
-    inkscape_meta_files=($(find . -type f -name "*.svg" -exec grep -l "inkscape:" {} +))
-    for file in "${inkscape_meta_files[@]}"; do
-        # Add file if not already in svg_files
-        if [[ ! " ${svg_files[*]} " =~ " ${file} " ]]; then
-            svg_files+=("$file")
-        fi
-    done
-
-    # If no SVG files are found, return
-    if [[ ${#svg_files[@]} -eq 0 ]]; then
-        echo "No SVG files found with 'stroke-width' or inkscape metadata."
-        read -p "Do you want to continue anyway? (y/N): " _answer
-        if [[ ! "$_answer" =~ ^[Yy]$ ]]; then
+    if [[ -n "$_target_file" ]]; then
+        if [[ ! -f "$_target_file" ]]; then
+            echo "Error: file '$_target_file' not found.";
+            return 0;
+        fi;
+        if [[ "$_target_file" != *.[sS][vV][gG] ]]; then
+            echo "Error: '$_target_file' is not an SVG file.";
+            return 0;
+        fi;
+        svg_files=("$_target_file");
+    else
+        # Check if node_modules exists in current directory
+        if [[ -d "node_modules" ]]; then
+            echo "Error: node_modules directory found in current directory.";
+            echo "Please run this script from a different location.";
             return 0
         fi
-        svg_files=($(find . -type f -name "*.svg"));
+
+        # Find SVG files in the current directory containing "stroke-width"
+        svg_files=($(find . -type f -name "*.svg" -exec grep -l "stroke-width=" {} +))
+
+        # Find SVG files containing inkscape metadata and add them to the list
+        inkscape_meta_files=($(find . -type f -name "*.svg" -exec grep -l "inkscape:" {} +))
+        for file in "${inkscape_meta_files[@]}"; do
+            # Add file if not already in svg_files
+            if [[ ! " ${svg_files[*]} " =~ " ${file} " ]]; then
+                svg_files+=("$file")
+            fi
+        done
+
+        # If no SVG files are found, return
+        if [[ ${#svg_files[@]} -eq 0 ]]; then
+            echo "No SVG files found with 'stroke-width' or inkscape metadata."
+            read -p "Do you want to continue anyway? (y/N): " _answer
+            if [[ ! "$_answer" =~ ^[Yy]$ ]]; then
+                return 0
+            fi
+            svg_files=($(find . -type f -name "*.svg"));
+        fi;
     fi;
 
     # Ask if the user wants to override existing files
@@ -82,4 +95,4 @@ function frontendutilities_fix_icons(){
 
 }
 
-frontendutilities_fix_icons;
+frontendutilities_fix_icons "$2";

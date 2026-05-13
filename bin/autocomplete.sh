@@ -19,6 +19,9 @@ _frontendutilities_complete() {
             "order-fonts")
                 COMPREPLY=( $(compgen -W "cssc-font-face font-face" -- $cur) )
             ;;
+            "fix-icons")
+                COMPREPLY=( $(compgen -f -X '!*.svg' -- $cur) )
+            ;;
             *)
             ;;
         esac

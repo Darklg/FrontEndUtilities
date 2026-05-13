@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.8.1
+## Frontend Utilities v 0.8.2
 ###################################
 TXT
 
@@ -14,7 +14,7 @@ function frontendutilities_init() {
     local _help_text="Help :\n\
 - frontendutilities center-icon\n\
 - frontendutilities convert-fonts\n\
-- frontendutilities fix-icons\n\
+- frontendutilities fix-icons [file.svg]\n\
 - frontendutilities order-fonts\n\
 - frontendutilities download-font\n";
 

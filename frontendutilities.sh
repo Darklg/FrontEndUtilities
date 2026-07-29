@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.8.2
+## Frontend Utilities v 0.8.3
 ###################################
 TXT
 

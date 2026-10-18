@@ -54,12 +54,25 @@ function frontendutilities_center_icon_one() {
 
     export LC_ALL=C
 
+    # inkscape --query-all returns page coordinates in px : convert them back to viewBox user units
+    # ponytail: width/height with units other than px (mm, em, %) are treated as px
+    read -r VB_X VB_Y VB_W VB_H DOC_W DOC_H <<< "$(perl -0ne '
+        /<svg\b(.*?)>/s or exit;
+        my $a = $1;
+        my ($w) = $a =~ /\swidth="([\d.]+)/;
+        my ($h) = $a =~ /\sheight="([\d.]+)/;
+        my @vb = $a =~ /\sviewBox="([^"]*)"/ ? split(/[\s,]+/, $1 =~ s/^\s+//r) : ();
+        @vb = (0, 0, $w, $h) if @vb != 4;
+        $w ||= $vb[2]; $h ||= $vb[3];
+        print "@vb $w $h";
+    ' "${INPUT_FILE}")"
+
     read -r X Y W H <<< "$(
     inkscape "${INPUT_FILE}" --query-all \
-    | awk -F',' '
-        BEGIN {minx=""; miny=""; maxx=""; maxy=""}
+    | awk -F',' -v vbx="${VB_X:-0}" -v vby="${VB_Y:-0}" -v vbw="${VB_W:-1}" -v vbh="${VB_H:-1}" -v dw="${DOC_W:-1}" -v dh="${DOC_H:-1}" '
+        BEGIN {minx=""; miny=""; maxx=""; maxy=""; sx=vbw/dw; sy=vbh/dh}
         NF >= 5 {
-        x=$2+0; y=$3+0; w=$4+0; h=$5+0;
+        x=vbx+$2*sx; y=vby+$3*sy; w=$4*sx; h=$5*sy;
         if (minx=="" || x<minx) minx=x;
         if (miny=="" || y<miny) miny=y;
         if (maxx=="" || (x+w)>maxx) maxx=x+w;

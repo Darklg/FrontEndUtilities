@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.8.4
+## Frontend Utilities v 0.9.0
 ###################################
 TXT
 
@@ -39,4 +39,4 @@ function frontendutilities_init() {
     . "${_SOURCEDIR}bin/stop.sh"
 
 }
-frontendutilities_init $@
+frontendutilities_init "$@"

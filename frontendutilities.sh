@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.9.0
+## Frontend Utilities v 0.10.0
 ###################################
 TXT
 
@@ -18,6 +18,8 @@ function frontendutilities_init() {
 - frontendutilities order-fonts\n\
 - frontendutilities download-font\n";
 
+    # Helpers
+    . "${_SOURCEDIR}bin/helpers.sh";
 
     # Autocomplete
     . "${_SOURCEDIR}bin/autocomplete.sh";

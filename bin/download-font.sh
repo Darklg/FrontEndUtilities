@@ -4,7 +4,9 @@ function frontendutilities_download_font() {
     local _api="https://api.fontsource.org/v1/fonts"
     local _font_name="${*:2}"
     local _font_id _font_json _query _matches _count _choice _dir _family
-    local _weight _style _url _weight_name _file _files _total _i=0
+    local _weight _style _url _weight_name _file _files _total _i=0 _fonts_dir
+
+    _fonts_dir="$(frontendutilities_get_fonts_dir)" || return 1
 
     if [[ -z "$_font_name" ]]; then
         echo "Usage: frontendutilities download-font \"Font Name\""
@@ -47,13 +49,10 @@ function frontendutilities_download_font() {
         _font_json="$(curl -fsSL "${_api}/${_font_id}")"
     fi
 
-    # Target dir : assets/fonts/raw if in a project root, else current dir
+    # Target dir : assets/fonts/raw/<Family>/
     _family="$(jq -r '.family' <<< "$_font_json" | tr -d ' ')"
 
-    _dir="./${_family}/"
-    if [[ -d "./assets/fonts" ]]; then
-        _dir="./assets/fonts/raw/${_family}/"
-    fi
+    _dir="${_fonts_dir}raw/${_family}/"
     mkdir -p "$_dir"
 
     # Static ttf files only, latin-ext with latin fallback

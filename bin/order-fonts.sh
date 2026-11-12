@@ -10,7 +10,8 @@ function frontendutilities_order_fonts() {
     local font_style
     local font_rel_path
 
-    local _dir="${_CURRENTDIR}assets/fonts/"
+    local _dir
+    _dir="$(frontendutilities_get_fonts_dir)" || return 0
 
     # Stop if the 'raw' directory is empty
     if [[ ! -d "${_dir}raw" ]]; then
@@ -24,8 +25,8 @@ function frontendutilities_order_fonts() {
 
     _lastfontname="";
 
-    # Browse all files in the 'raw' directory
-    for file in ${_dir}raw/*.woff; do
+    # Browse all woff files in the 'raw' directory and its subdirs
+    while IFS= read -r -d '' file; do
 
         # Remove 'subset-' prefix and get font name and extension
         font_file=$(basename "$file")
@@ -126,7 +127,7 @@ function frontendutilities_order_fonts() {
         else
             echo "@include cssc-font-face('$font_name_no_ext', '${font_rel_path}', $font_weight, $font_style, woff2 woff);"
         fi
-    done
+    done < <(find "${_dir}raw" -type f -name '*.woff' -print0 | sort -z)
 
 
     # Remove the 'raw' directory

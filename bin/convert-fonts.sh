@@ -3,7 +3,8 @@
 function frontendutilities_convert_fonts(){
     local _base;
     local _f;
-    local _dir="${_CURRENTDIR}assets/fonts/";
+    local _dir
+    _dir="$(frontendutilities_get_fonts_dir)" || return 0
 
     # Test if pyftsubset is installed
     if ! command -v pyftsubset >/dev/null 2>&1; then
@@ -29,9 +30,10 @@ function frontendutilities_convert_fonts(){
 
     cd "${_dir}raw";
 
-    for _f in *.ttf *.otf; do
-        _base="${_f/.ttf/}"
-        _base="${_base/.otf/}" ;
+    # ttf/otf files in raw and its subdirs, woff/woff2 are created next to them
+    while IFS= read -r -d '' _f; do
+        _f="${_f#./}"
+        _base="${_f%.*}"
         echo "- Converting font file: ${_base}";
 
         if ! pyftsubset "$_f" --output-file=/dev/null \
@@ -56,7 +58,7 @@ function frontendutilities_convert_fonts(){
         else
             echo "File ${_base}.woff2 already exists, skipping."
         fi;
-    done;
+    done < <(find . -type f \( -iname '*.ttf' -o -iname '*.otf' \) -print0 | sort -z)
 
     cd "${_CURRENTDIR}";
 

@@ -74,6 +74,10 @@ function frontendutilities_fix_icons(){
 
     # Process each SVG file
     for svg_file in "${svg_files[@]}"; do
+        if grep -q 'data:image/' "$svg_file"; then
+            echo "Warning: $svg_file contains an embedded raster image (base64), skipped.";
+            continue;
+        fi;
         echo "Processing $svg_file..."
         _newfile="${svg_file%.svg}-fixed.svg";
         if [[ "$can_override" -eq 1 ]]; then

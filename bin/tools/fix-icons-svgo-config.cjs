@@ -9,7 +9,6 @@ module.exports = {
                 attrs: [
                     'id',
                     'class',
-                    'xmlns',
                     'data.*',
                     'inkscape:.*',
                     'sodipodi:.*',

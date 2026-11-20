@@ -55,11 +55,11 @@ function frontendutilities_download_font() {
     _dir="${_fonts_dir}raw/${_family}/"
     mkdir -p "$_dir"
 
-    # Static ttf files only, latin-ext with latin fallback
-    _files="$(jq -r '.variants | to_entries[] | .key as $w | .value | to_entries[] | "\($w) \(.key) \((.value["latin-ext"] // .value.latin).url.ttf // empty)"' <<< "$_font_json")"
+    # Static ttf files only, latin subset (Fontsource subsets are disjoint, latin-ext lacks a-z)
+    _files="$(jq -r '.variants | to_entries[] | .key as $w | .value | to_entries[] | "\($w) \(.key) \(.value.latin.url.ttf // empty)"' <<< "$_font_json")"
     _total="$(grep -c . <<< "$_files")"
     if [[ "$_total" == "0" ]]; then
-        echo "No latin-ext or latin files found for '${_font_id}'."
+        echo "No latin files found for '${_font_id}'."
         return 1
     fi
 

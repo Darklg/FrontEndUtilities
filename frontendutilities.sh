@@ -2,7 +2,7 @@
 
 cat <<TXT
 ###################################
-## Frontend Utilities v 0.10.0
+## Frontend Utilities v 0.11.0
 ###################################
 TXT
 
@@ -16,7 +16,8 @@ function frontendutilities_init() {
 - frontendutilities convert-fonts\n\
 - frontendutilities fix-icons [file.svg]\n\
 - frontendutilities order-fonts\n\
-- frontendutilities download-font\n";
+- frontendutilities download-font\n\
+- frontendutilities src\n";
 
     # Helpers
     . "${_SOURCEDIR}bin/helpers.sh";
@@ -25,7 +26,7 @@ function frontendutilities_init() {
     . "${_SOURCEDIR}bin/autocomplete.sh";
 
     case "$1" in
-    "order-fonts" | "convert-fonts" | "fix-icons" | "center-icon" | "download-font" )
+    "order-fonts" | "convert-fonts" | "fix-icons" | "center-icon" | "download-font" | "src" )
         . "${_SOURCEDIR}bin/${1}.sh";
         ;;
     "" | "help")
